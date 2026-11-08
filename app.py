@@ -4,10 +4,6 @@ import streamlit as st
 
 st.title("Conexión con base de datos MySQL") 
 
-st.write("Usuario que lee Streamlit:", st.secrets["mysql"]["user"])
-st.write("Largo de la contraseña:", len(st.secrets["mysql"]["password"]))
-st.write("Host:", st.secrets["mysql"]["host"])
-
 # Obtener las credenciales almacenadas en Streamlit Secrets 
 
 host = st.secrets["mysql"]["host"] 
