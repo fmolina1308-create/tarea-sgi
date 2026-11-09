@@ -1,57 +1,42 @@
-import mysql.connector 
+import streamlit as st
+from modulos.login import login
+from modulos.VENTAS import mostrar_venta
+from modulos.productos import mostrar_productos
 
-import streamlit as st 
+# Inicializar variables de sesión
+if "sesion_iniciada" not in st.session_state:
+    st.session_state["sesion_iniciada"] = False
+if "usuario" not in st.session_state:
+    st.session_state["usuario"] = ""
 
-st.title("Conexión con base de datos MySQL") 
+# Comprobar si el usuario inició sesión
+if st.session_state["sesion_iniciada"]:
+    st.sidebar.title("Menú")
+    st.sidebar.write(f"Usuario: {st.session_state['usuario']}")
 
-# Obtener las credenciales almacenadas en Streamlit Secrets 
+    opciones = [
+        "Ventas",
+        "Productos",
+        "Información"
+    ]
+    seleccion = st.sidebar.selectbox("Seleccione una opción", opciones)
 
-host = st.secrets["mysql"]["host"] 
+    if seleccion == "Ventas":
+        mostrar_venta()
 
-port = st.secrets["mysql"]["port"] 
+    elif seleccion == "Productos":
+        mostrar_productos()
 
-user = st.secrets["mysql"]["user"] 
+    elif seleccion == "Información":
+        st.header("Información del sistema")
+        st.write(
+            "Aplicación desarrollada durante "
+            "el Laboratorio de SGI."
+        )
 
-password = st.secrets["mysql"]["password"] 
-
-database = st.secrets["mysql"]["database"] 
-
-# Intentar establecer la conexión 
-
-try: 
-
-    conn = mysql.connector.connect( 
-
-        host=host, 
-
-        port=port, 
-
-        user=user, 
-
-        password=password, 
-
-        database=database 
-
-    ) 
-
-    # Verificar si la conexión fue exitosa 
-
-    if conn.is_connected(): 
-
-        st.success("Conexión exitosa a la base de datos MySQL.") 
-
-    else: 
-
-        st.error("No se pudo conectar a la base de datos.") 
-
-except mysql.connector.Error as err: 
-
-    # Mostrar el error si la conexión falla 
-
-    st.error(f"Error al conectar con la base de datos: {err}") 
-
-finally: 
-
-    if "conn" in locals() and conn.is_connected(): 
-
-        conn.close() 
+    if st.sidebar.button("Cerrar sesión"):
+        st.session_state["sesion_iniciada"] = False
+        st.session_state["usuario"] = ""
+        st.rerun()
+else:
+    login()
